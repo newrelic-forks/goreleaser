@@ -12,7 +12,7 @@ require (
 	github.com/fatih/color v1.10.0
 	github.com/google/go-github/v28 v28.1.1
 	github.com/goreleaser/fileglob v1.2.0
-	github.com/goreleaser/nfpm/v2 v2.3.1
+	github.com/goreleaser/nfpm/v2 v2.0.100
 	github.com/imdario/mergo v0.3.12
 	github.com/jarcoal/httpmock v1.0.8
 	github.com/mitchellh/go-homedir v1.1.0
@@ -29,5 +29,5 @@ require (
 
 replace (
 	github.com/google/rpmpack => github.com/newrelic-forks/rpmpack v0.0.0-20210329155958-6665fc2d4767
-	github.com/goreleaser/nfpm/v2 v2.3.100 => github.com/newrelic-forks/nfpm/v2 v2.3.2-0.20210329163229-0c4f1f2261a0
+	github.com/goreleaser/nfpm/v2 v2.0.100 => github.com/newrelic-forks/nfpm/v2 v2.3.2-0.20210329160421-5e4642e1c907
 )
