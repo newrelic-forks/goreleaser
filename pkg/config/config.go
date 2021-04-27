@@ -4,7 +4,6 @@ package config
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -275,15 +274,16 @@ type Archive struct {
 
 // Release config used for the GitHub/GitLab release.
 type Release struct {
-	GitHub       Repo        `yaml:",omitempty"`
-	GitLab       Repo        `yaml:",omitempty"`
-	Gitea        Repo        `yaml:",omitempty"`
-	Draft        bool        `yaml:",omitempty"`
-	Disable      bool        `yaml:",omitempty"`
-	Prerelease   string      `yaml:",omitempty"`
-	NameTemplate string      `yaml:"name_template,omitempty"`
-	IDs          []string    `yaml:"ids,omitempty"`
-	ExtraFiles   []ExtraFile `yaml:"extra_files,omitempty"`
+	GitHub                 Repo        `yaml:",omitempty"`
+	GitLab                 Repo        `yaml:",omitempty"`
+	Gitea                  Repo        `yaml:",omitempty"`
+	Draft                  bool        `yaml:",omitempty"`
+	Disable                bool        `yaml:",omitempty"`
+	Prerelease             string      `yaml:",omitempty"`
+	NameTemplate           string      `yaml:"name_template,omitempty"`
+	IDs                    []string    `yaml:"ids,omitempty"`
+	ExtraFiles             []ExtraFile `yaml:"extra_files,omitempty"`
+	DiscussionCategoryName string      `yaml:"discussion_category_name,omitempty"`
 }
 
 // Milestone config used for VCS milestone.
@@ -332,6 +332,12 @@ type NFPMRPMSignature struct {
 	KeyPassphrase string `yaml:"-"` // populated from environment variable
 }
 
+// NFPMRPMScripts represents scripts only available on RPM packages.
+type NFPMRPMScripts struct {
+	PreTrans  string `yaml:"pretrans,omitempty"`
+	PostTrans string `yaml:"posttrans,omitempty"`
+}
+
 // NFPMRPM is custom configs that are only available on RPM packages.
 type NFPMRPM struct {
 	Summary              string            `yaml:"summary,omitempty"`
@@ -340,6 +346,7 @@ type NFPMRPM struct {
 	ConfigNoReplaceFiles map[string]string `yaml:"config_noreplace_files,omitempty"` // deprecated: use contents instead
 	GhostFiles           []string          `yaml:"ghost_files,omitempty"`            // deprecated: use contents instead
 	Signature            NFPMRPMSignature  `yaml:"signature,omitempty"`
+	Scripts              NFPMRPMScripts    `yaml:"scripts,omitempty"`
 }
 
 // NFPMDebScripts is scripts only available on deb packages.
@@ -610,6 +617,7 @@ type Project struct {
 	EnvFiles        EnvFiles         `yaml:"env_files,omitempty"`
 	Before          Before           `yaml:",omitempty"`
 	Source          Source           `yaml:",omitempty"`
+	GoMod           GoMod            `yaml:"gomod,omitempty"`
 
 	// this is a hack ¯\_(ツ)_/¯
 	SingleBuild Build `yaml:"build,omitempty"`
@@ -622,6 +630,12 @@ type Project struct {
 
 	// should be set if using Gitea
 	GiteaURLs GiteaURLs `yaml:"gitea_urls,omitempty"`
+}
+
+type GoMod struct {
+	Proxy    bool     `yaml:",omitempty"`
+	Env      []string `yaml:",omitempty"`
+	GoBinary string   `yaml:",omitempty"`
 }
 
 // Load config file.
@@ -637,7 +651,7 @@ func Load(file string) (config Project, err error) {
 
 // LoadReader config via io.Reader.
 func LoadReader(fd io.Reader) (config Project, err error) {
-	data, err := ioutil.ReadAll(fd)
+	data, err := io.ReadAll(fd)
 	if err != nil {
 		return config, err
 	}
